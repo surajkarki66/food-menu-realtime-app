@@ -2,15 +2,16 @@
   "name": "food-menu-realtime-app",
   "version": "1.0.0",
   "description": "This is a simple real time application build using MERN stack.",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "author": "SurajKarki",
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "monk": "^7.3.4",
     "socket.io": "^4.1.2"
