@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button, Table, Container } from "reactstrap";
-import { socket } from "../global/header";
+
+import { useSocket } from "../../contexts/SocketProvider";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 const Kitchen = () => {
+  const socket = useSocket();
   const [foodData, setFoodData] = useState([]);
 
   const getData = (foodItems) => {
     setFoodData(foodItems);
   };
 
-  const changeData = () => socket.emit("initialData");
+  const changeData = useCallback(() => {
+    socket.emit("initialData");
+  }, [socket]);
+
   useEffect(() => {
     socket.emit("initialData");
     socket.on("getData", getData);
@@ -19,7 +24,7 @@ const Kitchen = () => {
       socket.off("getData");
       socket.off("changeData");
     };
-  }, []);
+  }, [changeData, socket]);
 
   const markDone = (id) => {
     socket.emit("markDone", id);
