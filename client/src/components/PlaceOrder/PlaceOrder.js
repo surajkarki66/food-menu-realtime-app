@@ -7,7 +7,7 @@ const PlaceOrder = () => {
   const [foodData, setFoodData] = useState([]);
 
   useEffect(() => {
-    if (socket == null) return;
+    if (socket === null) return;
     // Loading initial menu
     socket.emit("initialData");
     socket.on("getData", getData);

@@ -19,6 +19,16 @@ io.on("connection", (socket) => {
       io.sockets.emit("getData", docs);
     });
   });
+
+  // Placing the order, gets called from /src/main/PlaceOrder.js of Frontend
+  socket.on("putOrder", (order) => {
+    foodItems
+      .update({ _id: order._id }, { $inc: { ordQty: order.order } })
+      .then((updatedDoc) => {
+        // Emitting event to update the Kitchen opened across the devices with the realtime order values
+        io.sockets.emit("changeData");
+      });
+  });
 });
 
 const port = config.PORT || 5003;
