@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Container } from "reactstrap";
+import { Table, Container, Button } from "reactstrap";
 import { useSocket } from "../../contexts/SocketProvider";
 
 const PlaceOrder = () => {
@@ -7,7 +7,7 @@ const PlaceOrder = () => {
   const [foodData, setFoodData] = useState([]);
 
   useEffect(() => {
-    if (socket === null) return;
+    if (socket == null) return;
     // Loading initial menu
     socket.emit("initialData");
     socket.on("getData", getData);
@@ -50,11 +50,28 @@ const PlaceOrder = () => {
             />
           </td>
           <td>
-            <button>Order</button>
+            <Button onClick={() => sendOrder(food._id)}>Order</Button>
           </td>
         </tr>
       );
     });
+  };
+
+  const sendOrder = (id) => {
+    var orderDetails;
+    foodData.map((food) => {
+      if (food._id === id) {
+        orderDetails = food;
+      }
+      return food;
+    });
+
+    socket.emit("putOrder", orderDetails);
+    const newArray = foodData.map((food) => {
+      food.order = 0;
+      return food;
+    });
+    setFoodData(newArray);
   };
   return (
     <Container>
