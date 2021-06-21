@@ -20,13 +20,23 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Placing the order, gets called from /src/main/PlaceOrder.js of Frontend
+  // Placing the order, gets called from /src/Components/PlaceOrder.js of Frontend
   socket.on("putOrder", (order) => {
     foodItems
       .update({ _id: order._id }, { $inc: { ordQty: order.order } })
       .then((updatedDoc) => {
         // Emitting event to update the Kitchen opened across the devices with the realtime order values
         io.sockets.emit("changeData");
+      });
+  });
+
+  // Order completion, gets called from /src/Components/Kitchen.js
+  socket.on("markDone", (id) => {
+    foodItems
+      .update({ _id: id }, { $inc: { ordQty: -1, prodQty: 1 } })
+      .then((updatedDoc) => {
+        //Updating the different Kitchen area with the current Status.
+        io.sockets.emit("change_data");
       });
   });
 });
