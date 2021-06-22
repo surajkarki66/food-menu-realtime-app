@@ -17,6 +17,9 @@ const Kitchen = () => {
   }, [socket]);
 
   useEffect(() => {
+    if (socket == null) {
+      return;
+    }
     socket.emit("initialData");
     socket.on("getData", getData);
     socket.on("changeData", changeData);

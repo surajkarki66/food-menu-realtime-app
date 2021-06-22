@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Placing the order, gets called from /src/Components/PlaceOrder.js of Frontend
+  // Placing the order, gets called from /src/Components/PlaceOrder/PlaceOrder.js of Frontend
   socket.on("putOrder", (order) => {
     foodItems
       .update({ _id: order._id }, { $inc: { ordQty: order.order } })
@@ -30,14 +30,32 @@ io.on("connection", (socket) => {
       });
   });
 
-  // Order completion, gets called from /src/Components/Kitchen.js
+  // Order completion, gets called from /src/Components/Kitchen/Kitchen.js
   socket.on("markDone", (id) => {
     foodItems
       .update({ _id: id }, { $inc: { ordQty: -1, prodQty: 1 } })
       .then((updatedDoc) => {
         //Updating the different Kitchen area with the current Status.
-        io.sockets.emit("change_data");
+        io.sockets.emit("changeData");
       });
+  });
+
+  // Functionality to change the predicted quantity value, called from /src/Components/UpdatePredicted.js
+  socket.on("ChangePred", (predicted_data) => {
+    foodItems
+      .update(
+        { _id: predicted_data._id },
+        { $set: { predQty: predicted_data.predQty } }
+      )
+      .then((updatedDoc) => {
+        // Socket event to update the Predicted quantity across the Kitchen
+        io.sockets.emit("changeData");
+      });
+  });
+
+  // disconnect is fired when a client leaves the server
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
   });
 });
 
